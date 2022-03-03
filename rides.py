@@ -1,3 +1,6 @@
+import h3
+
+
 class RideInfo:
     def __init__(self, hit):
         hit = hit['_source']
@@ -11,9 +14,15 @@ class RideInfo:
         hit = hit['ride']
         self.origin_lat = hit['origin']['lat']
         self.origin_lon = hit['origin']['lon']
+        # geo_to_h3 function returns the index in hexadecimal, I convert it to decimal
+        # Our case study is just Tehran and al the indexes in Tehran start with 6177839 so we just store the remainder
+        self.origin_index = int(h3.geo_to_h3(lat=self.origin_lat, lng=self.origin_lon, resolution=9), 16) % 617783900000000000
 
         self.dest_lat = hit['destination']['lat']
         self.dest_lon = hit['destination']['lon']
+        # geo_to_h3 function returns the index in hexadecimal, I convert it to decimal
+        # Our case study is just Tehran and al the indexes in Tehran start with 6177839 so we just store the remainder
+        self.dest_index = int(h3.geo_to_h3(lat=self.dest_lat, lng=self.dest_lon, resolution=9), 16) % 617783900000000000
 
 
 class Rides:
@@ -44,7 +53,8 @@ class RideDataset:
                                     "lte": time_most
                                 }
                             }
-                        }
+                        },
+                        {"term": {"origin_city_id": 1}}
                     ]
                 }
             }
