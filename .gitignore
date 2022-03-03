@@ -1,4 +1,4 @@
 .idea
 
-rides.py
 __pycache__/
+lightning_logs/

@@ -11,11 +11,13 @@ class MLP(pl.LightningModule):
     def __init__(self):
         super().__init__()
         self.layers = nn.Sequential(
-            nn.Linear(32 * 32 * 3, 64),
+            nn.Linear(5, 4),
             nn.ReLU(),
-            nn.Linear(64, 32),
+            nn.Linear(4, 3),
             nn.ReLU(),
-            nn.Linear(32, 1)
+            nn.Linear(3, 2),
+            nn.ReLU(),
+            nn.Linear(2, 1)
         )
         self.mse = nn.MSELoss()
 
@@ -25,8 +27,8 @@ class MLP(pl.LightningModule):
     def training_step(self, batch, batch_idx):
         x, y = batch
         x = x.view(x.size(0), -1)
-        y_hat = self.layers(x)
-        loss = self.mse(y_hat, y)
+        y_hat = self.layers(x.float())
+        loss = self.mse(y_hat, y.float())
         self.log('train_loss', loss)
         return loss
 
