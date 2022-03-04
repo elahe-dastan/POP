@@ -10,7 +10,6 @@ class Data(pl.LightningDataModule):
         self.batch_size = batch_size
 
     def train_dataloader(self):
-        #UserWarning
         return DataLoader(self.train, batch_size=self.batch_size, num_workers=8)
 
     def val_dataloader(self):

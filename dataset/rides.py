@@ -36,8 +36,11 @@ class Rides:
     def __init__(self, res, le):
         res = res['hits']['hits']
         self.hits = []
+        self.fuckMean = []
         for hit in res:
-            self.hits.append(RideInfo(hit, le))
+            ride_info = RideInfo(hit, le)
+            self.hits.append(ride_info)
+            self.fuckMean.append([ride_info.eta, ride_info.iran_day_of_week, ride_info.iran_time_of_day, ride_info.origin_index, ride_info.dest_index, ride_info.ata])
 
 
 class SampleDataset(Dataset):
@@ -89,4 +92,5 @@ class RideDataset:
             }
         })
 
-        return SampleDataset(Rides(res, self.le).hits)
+        rides = Rides(res, self.le)
+        return SampleDataset(rides.hits), rides.fuckMean
