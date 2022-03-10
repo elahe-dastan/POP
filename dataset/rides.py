@@ -36,16 +36,18 @@ class Rides:
     def __init__(self, res, le):
         res = res['hits']['hits']
         self.hits = []
-        self.fuckMean = []
+        self.column_data = []
         for hit in res:
             ride_info = RideInfo(hit, le)
             self.hits.append(ride_info)
-            self.fuckMean.append([ride_info.eta, ride_info.iran_day_of_week, ride_info.iran_time_of_day, ride_info.origin_index, ride_info.dest_index, ride_info.ata])
+            self.column_data.append([ride_info.eta, ride_info.iran_day_of_week, ride_info.iran_time_of_day, ride_info.origin_index, ride_info.dest_index, ride_info.ata])
 
 
 class SampleDataset(Dataset):
-    def __init__(self, rides):
+    def __init__(self, rides, mean, std):
         self.rides = rides
+        self.mean = mean
+        self.std = std
 
     def __len__(self):
         return len(self.rides)
@@ -54,7 +56,9 @@ class SampleDataset(Dataset):
         ride = self.rides[idx]
         features = np.array([ride.eta, ride.iran_day_of_week, ride.iran_time_of_day, ride.origin_index, ride.dest_index])
         target = ride.ata
-        return features, target
+        normalized_features = (features - self.mean[0:-1]) / self.std[0:-1]
+        normalized_target = (ride.ata - self.mean[-1]) / self.std[-1]
+        return normalized_features, normalized_target
 
 
 class RideDataset:
@@ -71,7 +75,10 @@ class RideDataset:
                    "FRIDAY": 6
                    }
 
-    def fetch_rides(self, time_least, time_most):
+        self.mean = None
+        self.std = None
+
+    def fetch_rides(self, time_least, time_most, mean=None, std=None):
         index = "farsanj-results-*"
         res = self._elastic_connection.search(index=index, body={
             "size": self.MAX_HIT,
@@ -93,4 +100,18 @@ class RideDataset:
         })
 
         rides = Rides(res, self.le)
-        return SampleDataset(rides.hits), rides.fuckMean
+
+        if mean is None:
+            column_data = np.array(rides.column_data)
+            self.mean = column_data.mean(axis=0)
+            self.std = column_data.std(axis=0)
+        else:
+            self.mean = mean
+            self.std = std
+
+        dataset = SampleDataset(rides.hits, self.mean, self.std)
+
+        if mean is None:
+            return dataset, self.mean, self.std
+
+        return dataset
