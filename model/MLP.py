@@ -2,11 +2,12 @@ from torch.optim import Adam
 from torch import nn
 import pytorch_lightning as pl
 from torch.optim.lr_scheduler import ExponentialLR
+from torch.utils.tensorboard import SummaryWriter
 
 
 class MLP(pl.LightningModule):
 
-    def __init__(self, writer):
+    def __init__(self):
         super().__init__()
         self.layers = nn.Sequential(
             nn.Linear(5, 4),
@@ -18,16 +19,19 @@ class MLP(pl.LightningModule):
             nn.Linear(2, 1)
         )
         self.mse = nn.MSELoss()
-        self.writer = writer
+        self.writer = SummaryWriter()
+        self.epoch = 0
 
     def forward(self, x):
-        return self.layers(x)
+        return self.layers(x.float())
 
     def training_step(self, batch, batch_idx):
         loss = self.step(batch)
         # self.log('train_loss', loss)
-        print('train_loss', loss)
-        self.writer.add_scalar("Loss/train", loss)
+        # print('train_loss', loss)
+        self.writer.add_scalar("Loss/train", loss, self.epoch)
+        self.writer.flush()
+        self.epoch += 1
 
         return loss
 
