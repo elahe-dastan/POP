@@ -14,6 +14,8 @@ class MLP(pl.LightningModule):
             nn.ReLU(),
             nn.Linear(4, 3),
             nn.ReLU(),
+            nn.Linear(3, 3),
+            nn.ReLU(),
             nn.Linear(3, 2),
             nn.ReLU(),
             nn.Linear(2, 1)

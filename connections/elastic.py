@@ -1,4 +1,4 @@
-from elasticsearch import Elasticsearch
+from elasticsearch7 import Elasticsearch
 
 
 class Elastic:
