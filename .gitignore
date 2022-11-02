@@ -5,3 +5,4 @@ lightning_logs/
 runs/
 
 *.csv
+feature_engineering/mlruns/

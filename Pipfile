@@ -10,6 +10,7 @@ jupyter = "*"
 matplotlib = "*"
 scikit-learn = "*"
 h3 = "*"
+mlflow = "*"
 
 [dev-packages]
 

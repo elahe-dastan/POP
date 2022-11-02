@@ -1,0 +1,58 @@
+apiVersion: machinelearning.seldon.io/v1
+kind: SeldonDeployment
+metadata:
+  name: regression
+  namespace: smapp-traffic
+spec:
+  name: regression
+  predictors:
+    - componentSpecs:
+        - spec:
+            containers:
+              - image: >-
+                  image-registry.openshift-image-registry.svc:5000/smapp-traffic/seldon-custom-mlflow-server:1.0.0
+                imagePullPolicy: Always
+                livenessProbe:
+                  failureThreshold: 200
+                  httpGet:
+                    path: /health/ping
+                    port: http
+                    scheme: HTTP
+                  initialDelaySeconds: 300
+                  periodSeconds: 5
+                  successThreshold: 1
+                name: regression
+                readinessProbe:
+                  failureThreshold: 200
+                  httpGet:
+                    path: /health/ping
+                    port: http
+                    scheme: HTTP
+                  initialDelaySeconds: 300
+                  periodSeconds: 5
+                  successThreshold: 1
+                resources:
+                  limits:
+                    cpu: 1
+                    ephemeral-storage: 2Gi
+                    memory: 2Gi
+                  requests:
+                    ephemeral-storage: 1Gi
+                    memory: 1Gi
+      graph:
+        envSecretRefName: seldon-rclone-secret
+        implementation: SMAPP_MLFLOW_SERVER
+        modelUri: 's3://mlflow/11/70b4e408224b498ab4d98ccf38999698/artifacts/regression'
+        name: regression
+        storageInitializerImage: 'seldonio/rclone-storage-initializer:1.14.0'
+      name: default
+      replicas: 1
+      svcOrchSpec:
+        resources:
+          limits:
+            ephemeral-storage: 2Gi
+            memory: 2Gi
+          requests:
+            cpu: 1
+            ephemeral-storage: 1Gi
+            memory: 1Gi
