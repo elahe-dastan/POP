@@ -11,6 +11,8 @@ matplotlib = "*"
 scikit-learn = "*"
 h3 = "*"
 mlflow = "*"
+pyarrow = "*"
+seaborn = "*"
 
 [dev-packages]
 

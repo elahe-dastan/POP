@@ -6,3 +6,5 @@ runs/
 
 *.csv
 feature_engineering/mlruns/
+
+*.parquet

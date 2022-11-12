@@ -2,9 +2,9 @@ from clickhouse_driver import Client
 import csv
 
 # map user
-client = Client(host='172.21.16.1',
-                user='map_user',
-                password='6zeQUqCj4y7puMxbBCeN')
+# client = Client(host='172.21.16.1',
+#                 user='map_user',
+#                 password='6zeQUqCj4y7puMxbBCeN')
 
 # koochooloo user
 # client = Client(host='172.21.16.1',
@@ -48,3 +48,9 @@ client = Client(host='172.21.16.1',
 #         write = csv.writer(f)
 # #     # write.writerow(fields)
 #         write.writerows(rides)
+
+# import pandas as pd
+# import pyarrow
+#
+# df = pd.read_csv('../rides_test.csv')
+# df.to_parquet('../rides_test.parquet')
