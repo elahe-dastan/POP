@@ -2,9 +2,9 @@ from clickhouse_driver import Client
 import csv
 
 # map user
-# client = Client(host='172.21.16.1',
-#                 user='map_user',
-#                 password='6zeQUqCj4y7puMxbBCeN')
+client = Client(host='172.21.16.1',
+                user='map_user',
+                password='6zeQUqCj4y7puMxbBCeN')
 
 # koochooloo user
 # client = Client(host='172.21.16.1',
@@ -14,22 +14,24 @@ import csv
 
 # b = client.execute('SELECT * FROM snapp_raw_log.khatkesh_result_proto LIMIT 1')
 # print(b)
+# '2022-12-10','2022-12-11','2022-12-12','2022-12-13','2022-12-14','2022-12-17','2022-12-18','2022-12-19','2022-12-20','2022-12-21','2022-12-24','2022-12-25','2022-12-26', '2022-12-31',
+dates = ['2023-01-01', '2023-01-02', '2023-01-03', '2023-01-04']
 
-# dates = ['2022-10-05']
-#
-# khatkesh_query = "SELECT * FROM snapp_raw_log.khatkesh_result_proto WHERE toDate(clickhouse_time, 'Iran') BETWEEN '{start_date}' AND '{finish_date}' AND toHour(clickhouse_time, 'Iran') BETWEEN {start_hour} AND {finish_hour}"
-# for date in dates:
-#     with open('../khatkesh_' + date + '_.csv', 'w') as f:
-#         write = csv.writer(f)
-#         for hour in range(24):
-#             print(khatkesh_query.format(start_date=date, finish_date=date, start_hour=hour, finish_hour=hour))
-#             khatkesh = client.execute(khatkesh_query.format(start_date=date, finish_date=date, start_hour=hour, finish_hour=hour))
-#             print(date)
-#             print(hour)
-#             print(len(khatkesh))
-#
-# #     # write.writerow(fields)
-#             write.writerows(khatkesh)
+khatkesh_query = "SELECT * FROM snapp_raw_log.khatkesh_result_proto WHERE toDate(clickhouse_time, 'Iran') BETWEEN '{start_date}' AND '{finish_date}' AND toHour(clickhouse_time, 'Iran') BETWEEN {start_hour} AND {finish_hour} AND toMinute(clickhouse_time, 'Iran') BETWEEN {start_minute} AND {finish_minute}"
+for date in dates:
+    with open('../khatkesh_' + date + '_.csv', 'w') as f:
+        write = csv.writer(f)
+        for hour in range(24):
+            for min in range(0, 60, 5):
+                print(khatkesh_query.format(start_date=date, finish_date=date, start_hour=hour, finish_hour=hour, start_minute=min, finish_minute=min+5))
+                khatkesh = client.execute(khatkesh_query.format(start_date=date, finish_date=date, start_hour=hour, finish_hour=hour, start_minute=min, finish_minute=min+5))
+                print("data: " + date)
+                print("hour: " + str(hour))
+                print("from " + str(min) + " minute to " + str(min+5) + " minute")
+                print("number of data: " + str(len(khatkesh)))
+
+#     # write.writerow(fields)
+            write.writerows(khatkesh)
 
 
 # b = ['ride_id','driver_id','a_t_a_result.arrival_a_t_a','a_t_a_result.boarding_a_t_a','a_t_a_result.ride_a_t_a','a_t_a_result.arrival_probe_result.probe.point.lat','a_t_a_result.arrival_probe_result.probe.point.lon','a_t_a_result.arrival_probe_result.probe.timestamp','a_t_a_result.arrival_probe_result.confidence','a_t_a_result.arrival_probe_result.h3_index', 'a_t_a_result.arrival_probe_result.k_ring_level','a_t_a_result.boarding_probe_result.probe.point.lat','a_t_a_result.boarding_probe_result.probe.point.lon','a_t_a_result.boarding_probe_result.probe.timestamp','a_t_a_result.boarding_probe_result.confidence','a_t_a_result.boarding_probe_result.h3_index','a_t_a_result.boarding_probe_result.k_ring_level','a_t_a_result.final_destination_probe_result.probe.point.lat','a_t_a_result.final_destination_probe_result.probe.point.lon','a_t_a_result.final_destination_probe_result.probe.timestamp','a_t_a_result.final_destination_probe_result.confidence','a_t_a_result.final_destination_probe_result.h3_index','a_t_a_result.final_destination_probe_result.k_ring_level','a_t_a_result.destination_probe_result.probe.point.lat','a_t_a_result.destination_probe_result.probe.point.lon','a_t_a_result.destination_probe_result.probe.timestamp','a_t_a_result.destination_probe_result.confidence','a_t_a_result.destination_probe_result.h3_index','a_t_a_result.destination_probe_result.k_ring_level','a_t_a_result.extra_destination_probe_result.probe.point.lat','a_t_a_result.extra_destination_probe_result.probe.point.lon','a_t_a_result.extra_destination_probe_result.probe.timestamp','a_t_a_result.extra_destination_probe_result.confidence','a_t_a_result.extra_destination_probe_result.h3_index','a_t_a_result.extra_destination_probe_result.k_ring_level','pickup_a_d_d_result.distance','pickup_a_d_d_result.confidence','pickup_a_d_d_result.route_ratio','pickup_a_d_d_result.g_p_s_ratio','ride_a_d_d_result.distance','ride_a_d_d_result.confidence','ride_a_d_d_result.route_ratio','ride_a_d_d_result.g_p_s_ratio','total_a_d_d_confidence','in_ride_allotment','e_d_d','clickhouse_time','hash']
