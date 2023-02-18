@@ -8,3 +8,9 @@ runs/
 feature_engineering/mlruns/
 
 *.parquet
+
+*.gz
+
+*.png
+
+academy/als_v_2022_02

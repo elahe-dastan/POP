@@ -13,6 +13,8 @@ h3 = "*"
 mlflow = "*"
 pyarrow = "*"
 seaborn = "*"
+keplergl = "*"
+minio = "*"
 
 [dev-packages]
 

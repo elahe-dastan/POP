@@ -1,3 +1,4 @@
+import pandas as pd
 from clickhouse_driver import Client
 import csv
 
@@ -95,6 +96,19 @@ client = Client(host='172.21.16.1',
 
 # dates = ['2023-01-01', '2023-01-02', '2023-01-03', '2023-01-04']
 #
+# cash_query = "SELECT id, passenger_must_pay_cash FROM dwh.snapp_rides WHERE toDate(created_date, 'Iran') BETWEEN '{start_date}' AND '{finish_date}' AND passenger_must_pay_cash > 0;"
+# for date in dates:
+#     with open('../cash_' + date + '.csv', 'w') as f:
+#         write = csv.writer(f)
+#         print(cash_query.format(start_date=date, finish_date=date))
+#         cash = client.execute(cash_query.format(start_date=date, finish_date=date))
+#         print("data: " + date)
+#         print("number of data: " + str(len(cash)))
+#         write.writerows(cash)
+
+
+# dates = ['2023-01-01', '2023-01-02', '2023-01-03', '2023-01-04']
+#
 # extra_destination_query = "SELECT id, extra_destination_price FROM snapp_mysql.rides_view WHERE toDate(created_date, 'Iran') BETWEEN '{start_date}' AND '{finish_date}' AND extra_destination_price != 0;"
 # for date in dates:
 #     with open('../extra_destination_' + date + '.csv', 'w') as f:
@@ -127,7 +141,7 @@ client = Client(host='172.21.16.1',
 # fraud
 # dates = ['2023-01-01', '2023-01-02', '2023-01-03', '2023-01-04']
 #
-# fraud_query = "SELECT id, fraud_price, fraud FROM snapp_mysql.rides_view WHERE toDate(created_date, 'Iran') BETWEEN '{start_date}' AND '{finish_date}' AND fraud_price == 1;"
+# fraud_query = "SELECT ride_id, fraud, reasons FROM dolos_postgres.frauds_meta WHERE toDate(created_date, 'Iran') BETWEEN '{start_date}' AND '{finish_date}' AND fraud = 1;"
 # for date in dates:
 #     with open('../fraud_' + date + '.csv', 'w') as f:
 #         write = csv.writer(f)
@@ -137,8 +151,29 @@ client = Client(host='172.21.16.1',
 #         print("number of data: " + str(len(fraud)))
 #         write.writerows(fraud)
 
-a = client.execute("DESCRIBE TABLE dolos_postgres.frauds;")
-print(a)
-
-# a = client.execute("SELECT ride_id, estimated_duration FROM snapp_raw_log.ride WHERE created_date='2023-01-02' LIMIT 10 ;")
+# a = client.execute("DESCRIBE TABLE dolos_postgres.frauds;")
 # print(a)
+
+# a = client.execute("DESCRIBE TABLE dwh.snapp_rides;")
+# print(a)
+
+# a = client.execute("SELECT * FROM dolos_postgres.frauds WHERE created_date='2023-01-01' LIMIT 10;")
+# print(a)
+
+# a = client.execute("DESCRIBE TABLE snapp_mysql.rides;")
+# print(a)
+
+
+# dates = ['2023-01-01']
+#
+# khatkesh_query = "SELECT * FROM snapp_raw_log.khatkesh_result_proto WHERE toDate(clickhouse_time, 'Iran') BETWEEN '{start_date}' AND '{finish_date}' AND toHour(clickhouse_time, 'Iran') BETWEEN {start_hour} AND {finish_hour};"
+# for date in dates:
+#     with open('xyz_' + date + '.csv', 'w') as f:
+#         write = csv.writer(f)
+#         for hour in range(24):
+#             print(khatkesh_query.format(start_date=date, finish_date=date, start_hour=hour, finish_hour=hour))
+#             khatkesh = client.execute(khatkesh_query.format(start_date=date, finish_date=date, start_hour=hour, finish_hour=hour))
+#             print("number of data: " + str(len(khatkesh)))
+#             write.writerows(khatkesh)
+
+client.execute("SELECT is_current, id, ride_id, city_id, origin_id FROM snapp_mysql.ride_locations LIMIT 10")
