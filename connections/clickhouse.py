@@ -176,4 +176,8 @@ client = Client(host='172.21.16.1',
 #             print("number of data: " + str(len(khatkesh)))
 #             write.writerows(khatkesh)
 
-client.execute("SELECT is_current, id, ride_id, city_id, origin_id FROM snapp_mysql.ride_locations LIMIT 10")
+a = client.execute("SELECT is_current, id, ride_id, city_id, origin_id FROM snapp_mysql.ride_locations LIMIT 10")
+print(a)
+
+
+# stream_snapp_mysql.ride_locations, snapp_mysql.ride_locations
